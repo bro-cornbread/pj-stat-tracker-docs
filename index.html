@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PJ Stat Tracker — Product Requirements</title>
+  <style>
+    :root {
+      --bg: #0A0A0F;
+      --bg-card: #1A1A2E;
+      --bg-elevated: #141420;
+      --primary: #E88F3D;
+      --primary-light: #F5A855;
+      --secondary: #367FA9;
+      --success: #34D399;
+      --error: #EF4444;
+      --warning: #F59E0B;
+      --text: #FFFFFF;
+      --text-secondary: #B0B0C0;
+      --text-muted: #6B6B80;
+      --border: #2A2A3E;
+      --ultra-rare: #E040FB;
+      --rare: #EF5350;
+      --uncommon: #F59E0B;
+      --common: #34D399;
+      --staple: #6B7280;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { color: var(--primary-light); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+    .nav-brand {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a {
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 120px 24px 64px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(232,143,61,0.08) 0%, transparent 60%);
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--primary); }
+    .hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .stat-item { text-align: center; }
+    .stat-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    /* ── SECTIONS ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    section {
+      padding: 64px 0;
+      border-top: 1px solid var(--border);
+    }
+    section:first-of-type { border-top: none; }
+
+    h2 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+    .section-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+    }
+
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card h4 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ── PERSONA CARDS ── */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .persona {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .persona h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--primary);
+    }
+    .persona p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ── RARITY TABLE ── */
+    .rarity-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+    }
+    .rarity-table td {
+      padding: 10px 16px;
+      background: var(--bg-card);
+      font-size: 14px;
+    }
+    .rarity-table tr td:first-child {
+      border-radius: 8px 0 0 8px;
+      font-weight: 700;
+    }
+    .rarity-table tr td:last-child {
+      border-radius: 0 8px 8px 0;
+      color: var(--text-muted);
+    }
+    .rarity-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    /* ── WIDGET TABLE ── */
+    .widget-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .widget-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .widget-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .widget-table td:first-child { font-weight: 600; }
+    .widget-table td:last-child { color: var(--text-secondary); }
+
+    /* ── SCREEN FEATURE LIST ── */
+    .screen-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .screen-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .screen-card h4 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .screen-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .screen-card li {
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding: 3px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+    .screen-card li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    /* ── TROPHY SECTION ── */
+    .trophy-tiers {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .trophy-tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .trophy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .trophy-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .trophy-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .trophy-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .trophy-req {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ── COLOR PALETTE ── */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .swatch {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .swatch-color {
+      height: 48px;
+    }
+    .swatch-info {
+      padding: 8px 12px;
+      background: var(--bg-card);
+    }
+    .swatch-name {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .swatch-hex {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    /* ── USER STORIES ── */
+    .stories-group { margin-bottom: 32px; }
+    .stories-group h3 { margin-bottom: 12px; }
+    .story {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .story-id {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--primary);
+      flex-shrink: 0;
+      width: 40px;
+      padding-top: 2px;
+    }
+    .story-text { color: var(--text-secondary); }
+
+    /* ── TYPOGRAPHY TABLE ── */
+    .type-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .type-table td, .type-table th {
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .type-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .type-table td:first-child { font-weight: 600; }
+
+    /* ── FUTURE ── */
+    .future-list {
+      list-style: none;
+      padding: 0;
+    }
+    .future-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .future-list li strong { color: var(--text); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 48px 24px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 32px; }
+      .stats-bar { gap: 20px; }
+      .stat-num { font-size: 24px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 12px; }
+      .card-grid, .screen-list, .trophy-grid, .palette-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-brand">PJ Stat Tracker</span>
+    <div class="nav-links">
+      <a href="#vision">Vision</a>
+      <a href="#screens">Screens</a>
+      <a href="#trophies">Trophies</a>
+      <a href="#design">Design</a>
+      <a href="#stories">Stories</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>PJ <span>Stat Tracker</span></h1>
+  <p>A cross-platform mobile app for Pearl Jam fans to track concert history, explore 35 years of live performance data, and earn trophies for their dedication.</p>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">1,125</div>
+      <div class="stat-label">Concerts</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">632</div>
+      <div class="stat-label">Songs</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">735</div>
+      <div class="stat-label">Venues</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24K+</div>
+      <div class="stat-label">Setlist Entries</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">39</div>
+      <div class="stat-label">Trophies</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- VISION -->
+<section id="vision">
+  <h2>The Problem</h2>
+  <p class="section-subtitle">Pearl Jam has played 1,100+ shows across 35 years. Fans have no good way to track their journey.</p>
+
+  <div class="persona-grid">
+    <div class="persona">
+      <h4>The Collector</h4>
+      <p>20+ shows. Wants to know exactly which songs they've heard, which albums they've "completed" live, and how their experience stacks up.</p>
+    </div>
+    <div class="persona">
+      <h4>The Casual Fan</h4>
+      <p>Goes to a show every few years. Wants to look up setlists, browse stats, and mark shows they attended.</p>
+    </div>
+    <div class="persona">
+      <h4>The Stat Nerd</h4>
+      <p>Loves data. Wants charts, rankings, rarity scores, trend lines, and deep breakdowns of 35 years of live history.</p>
+    </div>
+    <div class="persona">
+      <h4>The First-Timer</h4>
+      <p>Just went to their first show. Wants to understand what they experienced &mdash; was that setlist special? Were any songs rare?</p>
+    </div>
+  </div>
+</section>
+
+<!-- RARITY -->
+<section id="rarity">
+  <h2>Song Rarity System</h2>
+  <p class="section-subtitle">Every song has a rarity score (0.0 to 1.0) based on how frequently it's played. Songs are bucketed into five tiers.</p>
+
+  <table class="rarity-table">
+    <tr>
+      <td><span class="rarity-dot" style="background:#E040FB"></span> Ultra-Rare</td>
+      <td>Played at fewer than 1 in 200 shows</td>
+      <td>"Let Me Sleep"</td>
+    </tr>
+    <tr>
+      <td><span class="rarity-dot" style="background:#EF5350"></span> Rare</td>
+      <td>Played at 2-5% of shows</td>
+      <td>"Dirty Frank"</td>
+    </tr>
+    <tr>
+      <td><span class="rarity-dot" style="background:#F59E0B"></span> Uncommon</td>
+      <td>Played at ~10% of shows</td>
+      <td>"Lukin"</td>
+    </tr>
+    <tr>
+      <td><span class="rarity-dot" style="background:#34D399"></span> Common</td>
+      <td>Played at ~40% of shows</td>
+      <td>"Do the Evolution"</td>
+    </tr>
+    <tr>
+      <td><span class="rarity-dot" style="background:#6B7280"></span> Staple</td>
+      <td>Played at most shows</td>
+      <td>"Alive", "Black"</td>
+    </tr>
+  </table>
+</section>
+
+<!-- SCREENS -->
+<section id="screens">
+  <h2>Screens &amp; Features</h2>
+  <p class="section-subtitle">14 screens across 5 tabs, plus detail views, search, and settings.</p>
+
+  <div class="screen-list">
+    <div class="screen-card">
+      <h4>Stats Dashboard (Home)</h4>
+      <ul>
+        <li>Toggle between Band Stats and My Stats</li>
+        <li>Customizable widget grid with drag-and-drop</li>
+        <li>10 band widgets (charts, ranked lists, progress bars)</li>
+        <li>9 personal widgets including AI Insights carousel</li>
+        <li>Edit mode to add, remove, and reorder widgets</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Shows Browser</h4>
+      <ul>
+        <li>Browse all 1,125 concerts</li>
+        <li>Horizontal year filter chips</li>
+        <li>"Attended" toggle filter (signed-in users)</li>
+        <li>Show cards with date, venue, location, song count, poster</li>
+        <li>Pull-to-refresh</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Songs Explorer</h4>
+      <ul>
+        <li>Search bar with live filtering</li>
+        <li>Sort: A-Z, Most Played, Rarest</li>
+        <li>Rarity tier filter chips</li>
+        <li>Song rows with play count, rarity badge, cover badge</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Venue Map</h4>
+      <ul>
+        <li>Interactive world map with all venues</li>
+        <li>Pin colors by show density</li>
+        <li>Tap pin for venue callout with show count</li>
+        <li>Dark-themed map matching app aesthetic</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Profile</h4>
+      <ul>
+        <li>Avatar and user identity</li>
+        <li>Global stats grid (shows, songs, venues, countries)</li>
+        <li>Trophy progress bar with recent unlocks</li>
+        <li>Clickable rarity breakdown rows</li>
+        <li>Rarest songs seen and recent shows</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Show Detail</h4>
+      <ul>
+        <li>Poster image, date, venue, location</li>
+        <li>"I Was There" attendance toggle</li>
+        <li>1-5 star rating</li>
+        <li>Full setlist grouped by set with debut and rarity badges</li>
+        <li>Tappable songs navigate to song detail</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Song Detail</h4>
+      <ul>
+        <li>Song name, rarity badge, album</li>
+        <li>Stats: total plays, first/last played</li>
+        <li>Collapsible lyrics section</li>
+        <li>Recent performance history with venue links</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Album Detail</h4>
+      <ul>
+        <li>Cover art, release year, track count</li>
+        <li>Full track list with rarity badges and play counts</li>
+        <li>Streaming links (Spotify, Apple Music, etc.)</li>
+        <li>Production credits (collapsible)</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Poster Gallery (planned)</h4>
+      <ul>
+        <li>3-column grid of 1,000+ show posters</li>
+        <li>Year filter chips</li>
+        <li>Date overlay on each poster</li>
+        <li>Tap to navigate to show detail</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Trophy Screen</h4>
+      <ul>
+        <li>Grid of all 39 trophies by tier</li>
+        <li>Unlocked: full color. Locked: dimmed with lock icon</li>
+        <li>Tap for detail modal with description and unlock date</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Search</h4>
+      <ul>
+        <li>Unified search across songs, shows, venues</li>
+        <li>Results grouped by type with count badges</li>
+        <li>Tap any result to navigate to detail</li>
+      </ul>
+    </div>
+    <div class="screen-card">
+      <h4>Auth &amp; Settings</h4>
+      <ul>
+        <li>Email/password login and registration</li>
+        <li>"Continue without account" for view-only mode</li>
+        <li>Password reset via email</li>
+        <li>Sign out with confirmation dialog</li>
+        <li>Persistent sessions across app restarts</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- WIDGET TABLES -->
+  <div style="margin-top:48px">
+    <h3>Band Stat Widgets</h3>
+    <table class="widget-table">
+      <thead><tr><th>Widget</th><th>What It Shows</th></tr></thead>
+      <tbody>
+        <tr><td>Shows by Year</td><td>Bar chart of show frequency from 1990 to present</td></tr>
+        <tr><td>Rarity Distribution</td><td>Pie chart of songs by rarity tier</td></tr>
+        <tr><td>Top 10 Openers</td><td>Ranked list of most common opening songs</td></tr>
+        <tr><td>Top 10 Closers</td><td>Ranked list of most common closing songs</td></tr>
+        <tr><td>Most Played Songs</td><td>Top 15 songs by total play count</td></tr>
+        <tr><td>Album Completion</td><td>Progress bars showing % of each album played live</td></tr>
+        <tr><td>Avg Setlist Length</td><td>Average songs per show by year</td></tr>
+        <tr><td>Busiest Venues</td><td>Top 10 venues by show count</td></tr>
+        <tr><td>Shows by Country</td><td>Geographic distribution bar chart</td></tr>
+        <tr><td>Song Gap Tracker</td><td>Songs with longest drought since last performance</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:32px">
+    <h3>Personal Stat Widgets</h3>
+    <table class="widget-table">
+      <thead><tr><th>Widget</th><th>What It Shows</th></tr></thead>
+      <tbody>
+        <tr><td>My Shows</td><td>Attended count + percentage of all PJ shows</td></tr>
+        <tr><td>Unique Songs Heard</td><td>Distinct songs from all attended shows</td></tr>
+        <tr><td>My Rarity Catches</td><td>Pie chart of songs heard by rarity tier</td></tr>
+        <tr><td>My Albums Completed</td><td>Album songs heard live (progress bars)</td></tr>
+        <tr><td>Geographic Reach</td><td>Cities, states, countries visited</td></tr>
+        <tr><td>Most Seen Songs</td><td>Songs heard most across attended shows</td></tr>
+        <tr><td>Rating Distribution</td><td>Breakdown of show ratings given</td></tr>
+        <tr><td>My Show Timeline</td><td>Attended shows per year</td></tr>
+        <tr><td>AI Insights</td><td>3-card carousel of personalized AI observations</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- TROPHIES -->
+<section id="trophies">
+  <h2>Trophy System</h2>
+  <p class="section-subtitle">39 trophies across 5 Seattle venue tiers. Earn them by attending shows and building your concert journey.</p>
+
+  <div class="trophy-tiers">
+    <span class="trophy-tier-badge"><span class="rarity-dot" style="background:#8B8BA0"></span> The Showbox (8)</span>
+    <span class="trophy-tier-badge"><span class="rarity-dot" style="background:#34D399"></span> The Moore Theatre (10)</span>
+    <span class="trophy-tier-badge"><span class="rarity-dot" style="background:#367FA9"></span> The Off Ramp (8)</span>
+    <span class="trophy-tier-badge"><span class="rarity-dot" style="background:#E040FB"></span> The Paramount (6)</span>
+    <span class="trophy-tier-badge"><span class="rarity-dot" style="background:#FFD700"></span> The Crocodile (7)</span>
+  </div>
+
+  <h3>Common &mdash; The Showbox</h3>
+  <div class="trophy-grid">
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">First Timer</div><div class="trophy-req">Mark your first show</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">High Five</div><div class="trophy-req">Attend 5 shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">Perfect Night</div><div class="trophy-req">Rate a show 5 stars</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">First Steps</div><div class="trophy-req">Hear 10 unique songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">Bookmark</div><div class="trophy-req">Mark a show as favorite</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">Road Tripper</div><div class="trophy-req">Shows in 3 different cities</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">Trick or Treat</div><div class="trophy-req">Attend a show on Oct 31</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#8B8BA0"></span><div><div class="trophy-name">The Rhythm</div><div class="trophy-req">Attend 3+ shows</div></div></div>
+  </div>
+
+  <h3>Uncommon &mdash; The Moore Theatre</h3>
+  <div class="trophy-grid">
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">Double Digits</div><div class="trophy-req">Attend 10 shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">Dedicated</div><div class="trophy-req">Attend 25 shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">Setlist Scholar</div><div class="trophy-req">Hear 50 unique songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">Lucky Catch</div><div class="trophy-req">Hear a rare or ultra-rare song</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">Road Warrior</div><div class="trophy-req">Shows in 5 different cities</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">Side A</div><div class="trophy-req">Complete one album live</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">First Witness</div><div class="trophy-req">Be at a song's debut</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">The Voice</div><div class="trophy-req">Rate 5 different shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">The Architect</div><div class="trophy-req">Hear songs from 8 albums</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#34D399"></span><div><div class="trophy-name">The Foundation</div><div class="trophy-req">Shows in 5 different states</div></div></div>
+  </div>
+
+  <h3>Rare &mdash; The Off Ramp</h3>
+  <div class="trophy-grid">
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">Unicorn Spotter</div><div class="trophy-req">Hear an ultra-rare song</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">Rarity Hunter</div><div class="trophy-req">Hear 5 rare/ultra-rare songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">Half Century</div><div class="trophy-req">Attend 50 shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">Song Collector</div><div class="trophy-req">Hear 100 unique songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">Coast to Coast</div><div class="trophy-req">East and West coast shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">Triple Play</div><div class="trophy-req">Complete 3 albums live</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">The Face Melter</div><div class="trophy-req">Hear 10 rare/ultra-rare songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#367FA9"></span><div><div class="trophy-name">The Journeyman</div><div class="trophy-req">Shows spanning 3 decades</div></div></div>
+  </div>
+
+  <h3>Epic &mdash; The Paramount</h3>
+  <div class="trophy-grid">
+    <div class="trophy-item"><span class="trophy-icon" style="background:#E040FB"></span><div><div class="trophy-name">Tour Veteran</div><div class="trophy-req">Attend 75 shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#E040FB"></span><div><div class="trophy-name">Deep Cut Devotee</div><div class="trophy-req">Hear 20 rare/ultra-rare songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#E040FB"></span><div><div class="trophy-name">World Tourist</div><div class="trophy-req">Shows in 3+ countries</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#E040FB"></span><div><div class="trophy-name">Discographer</div><div class="trophy-req">Complete 5 albums live</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#E040FB"></span><div><div class="trophy-name">Walking Encyclopedia</div><div class="trophy-req">Hear 200 unique songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#E040FB"></span><div><div class="trophy-name">The Thunder</div><div class="trophy-req">10 shows in a single year</div></div></div>
+  </div>
+
+  <h3>Legendary &mdash; The Crocodile</h3>
+  <div class="trophy-grid">
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">Centurion</div><div class="trophy-req">Attend 100 shows</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">The Collection</div><div class="trophy-req">Complete all studio albums live</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">Living Archive</div><div class="trophy-req">Hear 300 unique songs</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">World Citizen</div><div class="trophy-req">Shows in 6+ countries</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">The Garden</div><div class="trophy-req">Attend a show at MSG</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">Mookie Blaylock</div><div class="trophy-req">Hear Alive, Even Flow, Black, Jeremy, Oceans live</div></div></div>
+    <div class="trophy-item"><span class="trophy-icon" style="background:#FFD700"></span><div><div class="trophy-name">The Origin</div><div class="trophy-req">Complete Ten + attend 50 shows</div></div></div>
+  </div>
+</section>
+
+<!-- DESIGN -->
+<section id="design">
+  <h2>Visual Design</h2>
+  <p class="section-subtitle">Dark Matter theme inspired by Pearl Jam's 2024 album. Barlow font family throughout.</p>
+
+  <h3>Color Palette</h3>
+  <div class="palette-grid">
+    <div class="swatch"><div class="swatch-color" style="background:#0A0A0F"></div><div class="swatch-info"><div class="swatch-name">Background</div><div class="swatch-hex">#0A0A0F</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#1A1A2E"></div><div class="swatch-info"><div class="swatch-name">Card Surface</div><div class="swatch-hex">#1A1A2E</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E88F3D"></div><div class="swatch-info"><div class="swatch-name">Primary (Amber)</div><div class="swatch-hex">#E88F3D</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#367FA9"></div><div class="swatch-info"><div class="swatch-name">Secondary (Blue)</div><div class="swatch-hex">#367FA9</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#34D399"></div><div class="swatch-info"><div class="swatch-name">Success</div><div class="swatch-hex">#34D399</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#EF4444"></div><div class="swatch-info"><div class="swatch-name">Error</div><div class="swatch-hex">#EF4444</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#E040FB"></div><div class="swatch-info"><div class="swatch-name">Ultra-Rare</div><div class="swatch-hex">#E040FB</div></div></div>
+    <div class="swatch"><div class="swatch-color" style="background:#FFD700"></div><div class="swatch-info"><div class="swatch-name">Legendary</div><div class="swatch-hex">#FFD700</div></div></div>
+  </div>
+
+  <div style="margin-top:32px">
+    <h3>Typography</h3>
+    <table class="type-table">
+      <thead><tr><th>Style</th><th>Size</th><th>Weight</th><th>Line Height</th></tr></thead>
+      <tbody>
+        <tr><td>H1</td><td>32px</td><td>Bold</td><td>40px</td></tr>
+        <tr><td>H2</td><td>24px</td><td>Bold</td><td>32px</td></tr>
+        <tr><td>H3</td><td>20px</td><td>SemiBold</td><td>28px</td></tr>
+        <tr><td>Body 1</td><td>16px</td><td>Regular</td><td>24px</td></tr>
+        <tr><td>Body 2</td><td>14px</td><td>Regular</td><td>20px</td></tr>
+        <tr><td>Caption</td><td>12px</td><td>Regular</td><td>16px</td></tr>
+        <tr><td>Label</td><td>11px</td><td>SemiBold, uppercase</td><td>14px</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:32px">
+    <h3>Component Patterns</h3>
+    <div class="card-grid">
+      <div class="card"><h4>Cards</h4><p>Rounded corners (12px), dark card background, subtle border</p></div>
+      <div class="card"><h4>Chips</h4><p>Rounded pill shape, outline in default state, filled when active</p></div>
+      <div class="card"><h4>Badges</h4><p>Small rounded rectangles with tier color background and white text</p></div>
+      <div class="card"><h4>Charts</h4><p>Amber bars, tier-colored pie segments, grey axis labels on dark background</p></div>
+      <div class="card"><h4>Ranked Lists</h4><p>Numbered items with horizontal progress bars showing relative value</p></div>
+      <div class="card"><h4>Progress Bars</h4><p>Rounded track with gradient fill, percentage label</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- USER STORIES -->
+<section id="stories">
+  <h2>User Stories</h2>
+  <p class="section-subtitle">36 stories across 4 categories defining what the app must do.</p>
+
+  <div class="stories-group">
+    <h3>Browse &amp; Discover</h3>
+    <div class="story"><span class="story-id">S-01</span><span class="story-text">As a fan, I want to browse all Pearl Jam concerts so I can explore the band's touring history.</span></div>
+    <div class="story"><span class="story-id">S-02</span><span class="story-text">As a fan, I want to filter shows by year so I can focus on a specific era.</span></div>
+    <div class="story"><span class="story-id">S-03</span><span class="story-text">As a fan, I want to search for a song, show, or venue so I can find what I'm looking for quickly.</span></div>
+    <div class="story"><span class="story-id">S-04</span><span class="story-text">As a fan, I want to see a song's rarity score so I know how special it was to hear it live.</span></div>
+    <div class="story"><span class="story-id">S-05</span><span class="story-text">As a fan, I want to view a show's full setlist so I can relive (or preview) the concert.</span></div>
+    <div class="story"><span class="story-id">S-06</span><span class="story-text">As a fan, I want to see which songs are played most often so I know what to expect at my next show.</span></div>
+    <div class="story"><span class="story-id">S-07</span><span class="story-text">As a fan, I want to see the band's busiest venues so I can plan where to catch a show.</span></div>
+    <div class="story"><span class="story-id">S-08</span><span class="story-text">As a fan, I want to see shows on a map so I can visualize the band's global reach.</span></div>
+    <div class="story"><span class="story-id">S-09</span><span class="story-text">As a fan, I want to see a song's performance history so I know when and where it was last played.</span></div>
+    <div class="story"><span class="story-id">S-10</span><span class="story-text">As a fan, I want to browse show posters in a visual gallery so I can appreciate the artwork.</span></div>
+    <div class="story"><span class="story-id">S-11</span><span class="story-text">As a fan, I want to see which songs have the longest gap since being played so I can identify potential surprises.</span></div>
+    <div class="story"><span class="story-id">S-12</span><span class="story-text">As a fan, I want to read a song's lyrics while viewing its stats.</span></div>
+    <div class="story"><span class="story-id">S-13</span><span class="story-text">As a fan, I want to see album details with streaming links so I can listen to songs I discovered through the app.</span></div>
+  </div>
+
+  <div class="stories-group">
+    <h3>Personal Tracking</h3>
+    <div class="story"><span class="story-id">S-14</span><span class="story-text">As a fan, I want to mark shows I attended so I can build my concert history.</span></div>
+    <div class="story"><span class="story-id">S-15</span><span class="story-text">As a fan, I want to rate shows I attended so I can remember which were my favorites.</span></div>
+    <div class="story"><span class="story-id">S-16</span><span class="story-text">As a fan, I want to see how many unique songs I've heard live so I can track my collection progress.</span></div>
+    <div class="story"><span class="story-id">S-17</span><span class="story-text">As a fan, I want to see which album songs I've heard live so I can track album completion.</span></div>
+    <div class="story"><span class="story-id">S-18</span><span class="story-text">As a fan, I want to see my rarest catches so I can appreciate the special moments.</span></div>
+    <div class="story"><span class="story-id">S-19</span><span class="story-text">As a fan, I want to see a timeline of my attended shows so I can visualize my journey.</span></div>
+    <div class="story"><span class="story-id">S-20</span><span class="story-text">As a fan, I want to see which songs I've heard the most so I know my personal staples.</span></div>
+    <div class="story"><span class="story-id">S-21</span><span class="story-text">As a fan, I want to see how my show count compares to the total so I can set attendance goals.</span></div>
+    <div class="story"><span class="story-id">S-22</span><span class="story-text">As a fan, I want to see how many cities, states, and countries I've seen shows in.</span></div>
+    <div class="story"><span class="story-id">S-23</span><span class="story-text">As a fan, I want AI-generated insights about my concert patterns so I can discover things I didn't know about my own history.</span></div>
+  </div>
+
+  <div class="stories-group">
+    <h3>Achievements</h3>
+    <div class="story"><span class="story-id">S-24</span><span class="story-text">As a fan, I want to earn trophies for attendance milestones so I feel rewarded for my dedication.</span></div>
+    <div class="story"><span class="story-id">S-25</span><span class="story-text">As a fan, I want to see all available trophies so I know what I'm working toward.</span></div>
+    <div class="story"><span class="story-id">S-26</span><span class="story-text">As a fan, I want trophies organized by difficulty tier so I can appreciate the progression.</span></div>
+    <div class="story"><span class="story-id">S-27</span><span class="story-text">As a fan, I want to see my trophy progress on my profile so others (and I) can see my achievements at a glance.</span></div>
+    <div class="story"><span class="story-id">S-28</span><span class="story-text">As a fan, I want special trophies tied to iconic venues (MSG, Wrigley) so attending those shows feels extra meaningful.</span></div>
+    <div class="story"><span class="story-id">S-29</span><span class="story-text">As a fan, I want a trophy for hearing the original Ten album live so I have a tangible goal to chase.</span></div>
+  </div>
+
+  <div class="stories-group">
+    <h3>Dashboard &amp; Customization</h3>
+    <div class="story"><span class="story-id">S-30</span><span class="story-text">As a fan, I want a customizable stats dashboard so I see the data I care about most.</span></div>
+    <div class="story"><span class="story-id">S-31</span><span class="story-text">As a fan, I want to reorder and add/remove widgets so the dashboard feels personal.</span></div>
+    <div class="story"><span class="story-id">S-32</span><span class="story-text">As a fan, I want separate band stats and personal stats views so I can switch between exploring the catalog and reviewing my own history.</span></div>
+  </div>
+
+  <div class="stories-group">
+    <h3>Account &amp; Auth</h3>
+    <div class="story"><span class="story-id">S-33</span><span class="story-text">As a visitor, I want to browse all band statistics without creating an account so I can evaluate the app before committing.</span></div>
+    <div class="story"><span class="story-id">S-34</span><span class="story-text">As a user, I want to reset my password via email so I can recover my account.</span></div>
+    <div class="story"><span class="story-id">S-35</span><span class="story-text">As a user, I want my session to persist across app restarts so I don't have to log in every time.</span></div>
+    <div class="story"><span class="story-id">S-36</span><span class="story-text">As a user, I want to sign out with a confirmation prompt so I don't accidentally lose my session.</span></div>
+  </div>
+</section>
+
+<!-- FUTURE -->
+<section id="future">
+  <h2>Future Considerations</h2>
+  <p class="section-subtitle">Not in scope for MVP, but on the roadmap.</p>
+  <ul class="future-list">
+    <li><strong>Social features</strong> &mdash; Share setlists, compare stats with friends, leaderboards</li>
+    <li><strong>Push notifications</strong> &mdash; Alerts when a rare song is played at tonight's show</li>
+    <li><strong>Setlist predictions</strong> &mdash; ML model predicting tonight's setlist based on historical patterns</li>
+    <li><strong>NFT badges</strong> &mdash; Blockchain-backed trophies for verifiable concert achievements</li>
+    <li><strong>Concert photos</strong> &mdash; User-uploaded photos tied to attended shows</li>
+    <li><strong>Apple Watch / Wear OS</strong> &mdash; Quick-glance widgets for setlist tracking during shows</li>
+    <li><strong>Home screen widget</strong> &mdash; iOS/Android widget showing next show or recent stats</li>
+  </ul>
+</section>
+
+</div>
+
+<footer>
+  PJ Stat Tracker &mdash; Product Requirements Document
+</footer>
+
+</body>
+</html>
